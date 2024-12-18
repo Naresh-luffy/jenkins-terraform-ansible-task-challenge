@@ -34,9 +34,9 @@ pipeline {
         stage('Ansible Deployment') {
             steps {
                 script {
-                   sleep '150'
-                    ansiblePlaybook becomeUser: 'ec2-user', credentialsId: 'aws-configure', disableHostKeyChecking: true, installation: 'ansible', inventory: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/inventory.yaml', playbook: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/amazon-playbook.yml', vaultTmpPath: ''
-                    ansiblePlaybook become: true, credentialsId: 'aws-configure', disableHostKeyChecking: true, installation: 'ansible', inventory: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/inventory.yaml', playbook: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/ubuntu-playbook.yml', vaultTmpPath: ''
+                   sleep '200'
+                    ansiblePlaybook becomeUser: 'ec2-user', credentialsId: 'amazon-linux', disableHostKeyChecking: true, installation: 'ansible', inventory: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/inventory.yaml', playbook: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/amazon-playbook.yml', vaultTmpPath: ''
+                    ansiblePlaybook become: true, credentialsId: 'ubuntu', disableHostKeyChecking: true, installation: 'ansible', inventory: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/inventory.yaml', playbook: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/ubuntu-playbook.yml', vaultTmpPath: ''
                 }
             }
         }
