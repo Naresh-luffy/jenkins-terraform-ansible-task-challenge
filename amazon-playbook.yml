@@ -1,37 +1,30 @@
-
 ---
-- hosts: frontend
-  become: true
+- name: Disable SELinux and firewalld on Linux systems
+  hosts: frontend
+  become: yes
   tasks:
-    - name: Disable SELinux
-      selinux:
-        state: disabled
+    - name: Disable SELinux permanently
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: "^SELINUX="
+        line: "SELINUX=disabled"
 
-    - name: Update DNF repositories
-      dnf:
-        name: "*"
-        state: latest
-
-    - name: Install Nginx
-      dnf:
+    - name: Enable NGINX repository
+      ansible.builtin.shell: amazon-linux-extras enable nginx1
+      become: true
+    - name: Install NGINX
+      ansible.builtin.yum:
         name: nginx
         state: present
-
-    - name: Start Nginx service
+      notify:
+        - restart nginx
+    - name: Ensure NGINX is running and enabled
       service:
         name: nginx
         state: started
-        enabled: true  # Start Nginx service on system boot
-        
-    - name: Configure Nginx proxy
-      template:
-        src: nginx.conf.j2
-        dest: /etc/nginx/nginx.conf
-      notify:
-        - restart nginx
-
+        enabled: yes
   handlers:
     - name: restart nginx
-      systemd:
+      service:
         name: nginx
         state: restarted
