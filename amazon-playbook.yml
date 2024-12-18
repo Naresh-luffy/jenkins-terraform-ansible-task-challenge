@@ -1,45 +1,37 @@
----
-- name: Disable SELinux and firewalld on Linux systems
-  hosts: frontend
-  become: yes
-  tasks:
-    - name: Disable SELinux permanently
-      lineinfile:
-        path: /etc/selinux/config
-        regexp: "^SELINUX="
-        line: "SELINUX=disabled"
 
-    - name: Enable NGINX repository
-      ansible.builtin.shell: amazon-linux-extras enable nginx1
-      become: true
-    - name: Install NGINX
-      ansible.builtin.yum:
+---
+- hosts: frontend
+  become: true
+  tasks:
+    - name: Disable SELinux
+      selinux:
+        state: disabled
+
+    - name: Update DNF repositories
+      dnf:
+        name: "*"
+        state: latest
+
+    - name: Install Nginx
+      dnf:
         name: nginx
         state: present
-      become: true
-    - name: Configure NGINX as a proxy to Netdata
-      copy:
-        dest: /etc/nginx/conf.d/netdata_proxy.conf
-        content: |
-          server {
-              listen 80;
 
-              server_name {{ ansible_hostname }};  # Use the hostname or specify a domain name
-
-              location / {
-                  proxy_pass http://127.0.0.1:19999;  # Proxy to Netdata on port 19999
-
-              }
-          }
-      notify:
-        - restart nginx
-    - name: Ensure NGINX is running and enabled
+    - name: Start Nginx service
       service:
         name: nginx
         state: started
-        enabled: yes
+        enabled: true  # Start Nginx service on system boot
+        
+    - name: Configure Nginx proxy
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify:
+        - restart nginx
+
   handlers:
     - name: restart nginx
-      service:
+      systemd:
         name: nginx
         state: restarted
