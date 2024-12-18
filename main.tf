@@ -23,7 +23,7 @@ EOF
 
 resource "aws_instance" "frontend" { #amazon-playbook.yaml NGINX
   ami                    = "ami-02a0945ba27a488b7"
-  instance_type          = "t2.micro"
+  instance_type          = "t3.micro"
   key_name               = "Linux-Testing"
   tags = {
     Name = "c8.local"
