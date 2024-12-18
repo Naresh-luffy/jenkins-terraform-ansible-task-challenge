@@ -18,6 +18,7 @@ pipeline {
                     dir('/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/') {
                     sh 'pwd'
                     sh 'terraform init'
+                    sh 'terraform plan'
                     // sh 'terraform destroy -auto-approve'
                     
                     sh 'terraform apply -auto-approve'
