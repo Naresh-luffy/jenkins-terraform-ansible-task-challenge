@@ -34,7 +34,7 @@ pipeline {
         stage('Ansible Deployment') {
             steps {
                 script {
-                   sleep '200'
+                   sleep '360'
                     ansiblePlaybook becomeUser: 'ec2-user', credentialsId: 'amazon-linux', disableHostKeyChecking: true, installation: 'ansible', inventory: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/inventory.yaml', playbook: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/amazon-playbook.yml', vaultTmpPath: ''
                     ansiblePlaybook become: true, credentialsId: 'ubuntu', disableHostKeyChecking: true, installation: 'ansible', inventory: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/inventory.yaml', playbook: '/var/lib/jenkins/workspace/zoro1/jenkins-terraform-ansible-task-challenge/ubuntu-playbook.yml', vaultTmpPath: ''
                 }
