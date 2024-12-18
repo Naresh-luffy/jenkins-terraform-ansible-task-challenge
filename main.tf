@@ -1,12 +1,12 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "eu-north-1"
 }
 
 resource "aws_instance" "backend" { #ubuntu.yaml NETADATA
-  ami                    = "ami-0fc5d935ebf8bc3bc"
-  instance_type          = "t2.micro" 
-  key_name               = "ubuntu-key"
-  vpc_security_group_ids = ["sg-04cb5f715d70d6f35"]
+  ami                    = "ami-089146c5626baa6bf"
+  instance_type          = "t3.micro" 
+  key_name               = "Linux-Testing"
+  vpc_security_group_ids = ["sg-0cab4237bc383af80"]
   tags = {
     Name = "u21.local"
   }
@@ -23,10 +23,10 @@ EOF
 }
 
 resource "aws_instance" "frontend" { #amazon-playbook.yaml NGINX
-  ami                    = "ami-05c13eab67c5d8861"
+  ami                    = "ami-02a0945ba27a488b7"
   instance_type          = "t2.micro"
-  key_name               = "linux"
-  vpc_security_group_ids = ["sg-04cb5f715d70d6f35"]
+  key_name               = "Linux-Testing"
+  vpc_security_group_ids = ["sg-0cab4237bc383af80"]
   tags = {
     Name = "c8.local"
   }
