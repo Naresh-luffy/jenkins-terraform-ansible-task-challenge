@@ -5,8 +5,8 @@
   tasks:
     - name: Update DNF repositories
       dnf:
-        name: python3-dnf
-        state: present
+        name: "*"
+        state: latest
   
     - name: Disable SELinux permanently
       lineinfile:
