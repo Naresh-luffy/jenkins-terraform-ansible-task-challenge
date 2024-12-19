@@ -8,6 +8,11 @@
         path: /etc/selinux/config
         regexp: "^SELINUX="
         line: "SELINUX=disabled"
+        
+    - name: Update DNF repositories
+      dnf:
+        name: "*"
+        state: latest
 
     - name: Enable NGINX repository
       ansible.builtin.shell: amazon-linux-extras enable nginx1
