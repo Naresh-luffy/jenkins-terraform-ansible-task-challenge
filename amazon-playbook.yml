@@ -12,37 +12,40 @@
     - name: Enable NGINX repository
       ansible.builtin.shell: amazon-linux-extras enable nginx1
       become: true
-
     - name: Install NGINX
       ansible.builtin.yum:
         name: nginx
         state: present
+      become: true
+    - name: Configure NGINX as a proxy to Netdata
+      copy:
+        dest: /etc/nginx/conf.d/netdata_proxy.conf
+        content: |
+          server {
+              listen 80;
 
+              server_name {{ ansible_hostname }};  # Use the hostname or specify a domain name
+
+              location / {
+                  proxy_pass http://127.0.0.1:19999;  # Proxy to Netdata on port 19999
+                  
+              }
+          }
     - name: Configure Nginx proxy
       template:
         src: nginx.conf.j2
         dest: /etc/nginx/nginx.conf
       notify:
+        - restart nginx      
+      notify:
         - restart nginx
-
     - name: Ensure NGINX is running and enabled
       service:
         name: nginx
         state: started
         enabled: yes
-      ignore_errors: yes  # Ignore this error temporarily to proceed and let handler take over
-
   handlers:
     - name: restart nginx
-      block:
-        - name: Test NGINX configuration
-          command: nginx -t
-          register: nginx_test
-          failed_when: nginx_test.rc != 0
-          changed_when: false
-
-        - name: Restart NGINX if the configuration is valid
-          service:
-            name: nginx
-            state: restarted
-      when: nginx_test.rc == 0
+      service:
+        name: nginx
+        state: restarted
