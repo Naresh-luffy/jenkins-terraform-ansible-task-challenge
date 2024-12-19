@@ -18,6 +18,9 @@
         state: present
       become: true
     - name: Configure NGINX as a proxy to Netdata
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
       copy:
         dest: /etc/nginx/conf.d/netdata_proxy.conf
         content: |
@@ -31,10 +34,7 @@
                   
               }
           }
-    - name: Configure Nginx proxy
-      template:
-        src: nginx.conf.j2
-        dest: /etc/nginx/nginx.conf
+  
       notify:
         - restart nginx      
       notify:
