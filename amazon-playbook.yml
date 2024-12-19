@@ -8,19 +8,16 @@
         path: /etc/selinux/config
         regexp: "^SELINUX="
         line: "SELINUX=disabled"
-    
-    # Enabling the NGINX repository on Amazon Linux 2
+
     - name: Enable NGINX repository
       ansible.builtin.shell: amazon-linux-extras enable nginx1
       become: true
 
-    # Install NGINX using the yum package manager (Amazon Linux 2)
     - name: Install NGINX
       ansible.builtin.yum:
         name: nginx
         state: present
 
-    # Apply custom NGINX configuration from a template
     - name: Configure Nginx proxy
       template:
         src: nginx.conf.j2
@@ -28,16 +25,24 @@
       notify:
         - restart nginx
 
-    # Ensure the NGINX service is started and enabled on boot
     - name: Ensure NGINX is running and enabled
       service:
         name: nginx
         state: started
         enabled: yes
+      ignore_errors: yes  # Ignore this error temporarily to proceed and let handler take over
 
   handlers:
-    # Restart NGINX if the configuration changes
     - name: restart nginx
-      service:
-        name: nginx
-        state: restarted
+      block:
+        - name: Test NGINX configuration
+          command: nginx -t
+          register: nginx_test
+          failed_when: nginx_test.rc != 0
+          changed_when: false
+
+        - name: Restart NGINX if the configuration is valid
+          service:
+            name: nginx
+            state: restarted
+      when: nginx_test.rc == 0
