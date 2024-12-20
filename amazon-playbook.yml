@@ -21,16 +21,15 @@
       copy:
         dest: /etc/nginx/conf.d/netdata_proxy.conf
         content: |
-          server {
-              listen 80;
-
-              server_name {{ ansible_hostname }};  # Use the hostname or specify a domain name
-
-              location /{
-                  proxy_pass http://127.0.0.1:19999;  # Proxy to Netdata on port 19999
-                  
-              }
-          }
+         server {
+        listen       80;
+        listen       [::]:80;
+        server_name  c8.local;
+        root         /usr/share/nginx/html;
+        location /{
+            proxy_pass http://u21.local:19999;
+            }
+         }
       notify:
         - restart nginx
     - name: Ensure NGINX is running and enabled
