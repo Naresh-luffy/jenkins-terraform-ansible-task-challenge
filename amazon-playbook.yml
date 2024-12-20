@@ -1,3 +1,4 @@
+
 ---
 - name: Disable SELinux and firewalld on Linux systems
   hosts: frontend
@@ -6,8 +7,9 @@
     - name: Disable SELinux permanently
       lineinfile:
         path: /etc/selinux/config
-        regexp: ^SELINUX=
-        line: SELINUX=disabled
+        regexp: "^SELINUX="
+        line: "SELINUX=disabled"
+
     - name: Enable NGINX repository
       ansible.builtin.shell: amazon-linux-extras enable nginx1
       become: true
@@ -21,13 +23,14 @@
         dest: /etc/nginx/conf.d/netdata_proxy.conf
         content: |
           server {
-              listen       80;
-              listen       [::]:80;
-              server_name  c8.local;
-              root         /usr/share/nginx/html;
-              location /{
-                  proxy_pass http://u21.local:19999;
-             }
+              listen 80;
+
+              server_name {{ ansible_hostname }};  # Use the hostname or specify a domain name
+
+              location / {
+                  proxy_pass http://127.0.0.1:19999;  # Proxy to Netdata on port 19999
+                  
+              }
           }
       notify:
         - restart nginx
